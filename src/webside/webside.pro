@@ -13,7 +13,8 @@ config += network
 CONFIG += no_keywords
 # Wt
 INCLUDEPATH += /usr/include/Wt
-LIBS += -lwt -lwtfcgi -lcommon -lwikigpsHttp -lwikigpsJson -lboost_signals 
+#LIBS += -lwt -lwtfcgi -lcommon -lwikigpsHttp -lwikigpsJson -lboost_signals 
+LIBS += -lwt -lwthttp -lcommon -lwikigpsHttp -lwikigpsJson -lboost_signals
 
 
 # Common library
