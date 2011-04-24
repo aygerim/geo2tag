@@ -47,7 +47,7 @@ namespace common
   {
   }
 
-  Picture::Picture(const Picture &p):m_data(p.m_data)
+  Picture::Picture(const Picture &p): QImage(), m_data(p.m_data)
   {
   }
 

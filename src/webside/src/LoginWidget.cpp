@@ -3,8 +3,7 @@
 #include "defines.h"
 #include <QString>
 #include <syslog.h>
-//#include "OpenStreetMap.h"
-//#include "YandexMap.h"
+#include <QDebug>
 #include <QObject>
 #include <Wt/WLabel>
 #include <Wt/WText>
@@ -19,35 +18,27 @@ LoginWidget::LoginWidget(WContainerWidget *parent)
                              "or view marks from public channels",
                              this);
     intro->setId("intro");
-//    WBreak *break1 = new WBreak(this);
+
     WLabel *usernameLabel = new WLabel("Username:", this);
     usernameEdit = new WLineEdit(this);
     usernameLabel->setBuddy(usernameEdit);
     WLabel *passwordLabel = new WLabel("Password:", this);
-    //m_loginQuery=new LoginQuery();
+
     passwordEdit = new WLineEdit(this);
     passwordEdit->setEchoMode(WLineEdit::Password);
     passwordLabel->setBuddy(passwordEdit);
     loginButton = new WPushButton("Login", this);
-//    WBreak *break2 = new WBreak(this);
+
     map = new WGoogleMap(this);
     map->setMinimumSize(WLength(300), WLength(400));
     map->setMaximumSize(WLength(500), WLength(400));
     map->setCenter(Wt::WGoogleMap::Coordinate(60, 30));
     map->enableScrollWheelZoom();
-//    WBreak *break3 = new WBreak(this);
-//    WOpenStreetMap *map2 = new WOpenStreetMap(this);
-//    map2->setMinimumSize(WLength(300), WLength(400));
-//    //map2->setMaximumSize(WLength(500), WLength(400));
-//
-//    WBreak *break4 = new WBreak(this);
-//    WYandexMap *map3 = new WYandexMap(this);
-//    map3->setMinimumSize(WLength(300), WLength(400));
 
-  //  loginButton->clicked().connect(this, &LoginWidget::loginClicked);
+
+    loginButton->clicked().connect(this, &LoginWidget::loginClicked);
     fillMap();
     initCons();
-//    m_con=new Connector<LoginWidget>(&m_loginQuery,LoginQueryConnected,&LoginWidget::userRecieved,this);
 
     this->setStyleClass("login_wigdet");
 }
@@ -78,11 +69,16 @@ void LoginWidget::loginClicked()
 {
     QString name = QString(usernameEdit->text().toUTF8().c_str());
     QString pass = QString(passwordEdit->text().toUTF8().c_str());
+    qDebug() << "name=" << name;
     syslog(LOG_INFO,"LoginWidget::loginClicked(), %s - %s",usernameEdit->text().toUTF8().c_str(),passwordEdit->text().toUTF8().c_str());
     syslog(LOG_INFO,"Server url: %s, server port: %i",getServerUrl().toStdString().c_str(),getServerPort());
-    m_loginQuery.setQuery(name,pass);
-    m_loginQuery.doRequest();
-	
+
+    LoginQuery  *m_log = new LoginQuery;
+
+    m_log->setQuery(name,pass);
+    new LoginWidgetConnector(&m_loginQuery,this,&LoginWidget::userRecieved);
+    m_log->doRequest();
+
 }
 
 void LoginWidget::userRecieved(){

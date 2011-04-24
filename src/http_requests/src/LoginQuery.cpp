@@ -67,6 +67,7 @@ QString LoginQuery::getUrl() const
 
 QByteArray LoginQuery::getRequestBody() const
 {
+    qDebug() << "LoginQuery::getRequestBody";
     QSharedPointer<User> dummyUser(new JsonUser(m_login,m_password));
     LoginRequestJSON request;
     request.addUser(dummyUser);

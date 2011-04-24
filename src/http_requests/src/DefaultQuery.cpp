@@ -5,25 +5,41 @@
 #include "defines.h"
 
 DefaultQuery::DefaultQuery(QObject *parent): QObject(parent),
-        m_manager(new QNetworkAccessManager(parent))
+    m_manager(NULL)
 {
-    connect(m_manager, SIGNAL(finished(QNetworkReply*)),this, SLOT(process(QNetworkReply*)));
-    connect(m_manager, SIGNAL(sslErrors(QNetworkReply*,QList<QSslError>)), this, SLOT(handleError()));
 }
 
 
 void DefaultQuery::doRequest()
 {
+
+    if(m_manager == NULL)
+    {
+        qDebug() << "initializeng DefaultQuery::doRequest()";
+        m_manager = new QNetworkAccessManager(this);
+        connect(m_manager, SIGNAL(finished(QNetworkReply*)),this, SLOT(process(QNetworkReply*)));
+        connect(m_manager, SIGNAL(sslErrors(QNetworkReply*,QList<QSslError>)), this, SLOT(handleError()));
+    }
+
+
     QNetworkRequest request;
 
     QUrl url(getUrl());
-    url.setPort(getServerPort());
+
+    //NOTE: for testing
+    url="http://tracklife.ru/service";
+
+    // url.setPort(getServerPort());
     request.setUrl(url);
 
     qDebug() << "doing post to" << url << " with body: " << getRequestBody();
-    syslog(LOG_INFO,"posting http request to %s with body %s",url.toString().toStdString().c_str(),QString(getRequestBody()).toStdString().c_str());
-    QNetworkReply *reply = m_manager->post(request, getRequestBody());
-    connect(reply, SIGNAL(error(QNetworkReply::NetworkError)), SLOT(handleError()));
+    syslog(LOG_INFO,"posting http request to %s with body %s",
+           url.toString().toStdString().c_str(),
+           QString(getRequestBody()).toStdString().c_str());
+
+    /*QNetworkReply *reply = */m_manager->post(request, getRequestBody());
+    //qDebug() << reply;
+    //connect(reply, SIGNAL(error(QNetworkReply::NetworkError)), SLOT(handleError()));
 }
 
 void DefaultQuery::process(QNetworkReply *reply)
