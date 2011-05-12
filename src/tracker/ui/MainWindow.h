@@ -3,8 +3,11 @@
 
 #include <QTcpSocket>
 #include <QTextStream>
-
+#ifndef maemo5_ui
 #include "ui_MainWindow.h"
+#else
+#include "ui_MainWindow_maemo.h"
+#endif
 #include "LogWidget.h"
 #include "OptionsWidget.h"
 #include "AboutWidget.h"

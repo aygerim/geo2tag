@@ -36,6 +36,13 @@ HEADERS += tracker.h \
 
 RESOURCES += \
     images.qrc
+		
+!maemo5 {
+	FORMS += MainWindow.ui
+		}
 
-FORMS += \
-    MainWindow.ui
+maemo5 {
+	DEFINES += maemo5_ui
+	FORMS += MainWindow_maemo.ui
+}
+
